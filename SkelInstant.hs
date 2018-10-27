@@ -19,10 +19,13 @@ findIndex start character (x:xs) = if x == character then start else findIndex (
 findIndex start character [] = start
 
 decrementStackSize :: Context -> Context
-decrementStackSize ctx = Context ((stackSize ctx) - 1) (locals ctx) (names ctx)
+decrementStackSize ctx = Context (stackSize ctx) ((currentStackSize ctx) - 1) (locals ctx) (names ctx)
 
 incrementStackSize :: Context -> Context
-incrementStackSize ctx = Context ((stackSize ctx) + 1) (locals ctx) (names ctx)
+incrementStackSize ctx = do
+  let incremented = (currentStackSize ctx) + 1
+  if stackSize ctx < incremented then Context incremented incremented (locals ctx) (names ctx)
+  else Context (stackSize ctx) incremented (locals ctx) (names ctx)
 
 transProgram :: Program -> Context -> String
 transProgram x context = case x of
@@ -44,34 +47,52 @@ transStmt x c = case x of
       let id = transIdent ident
       let index = findIndex 0 id (names c)
       let n = (names c) ++ [id]
-      let newContext = Context 0 0 n
-      let e = (transExp exp c) ++ "istore " ++ show index ++ "\n"
-      (e, newContext)
-  SExp exp -> (transExp exp c, c)
+      let newContext = Context (stackSize c) (currentStackSize c) (locals c) n
+      let res = transExp exp newContext
+      let e = (fst res) ++ "istore " ++ show index ++ " " ++ show (currentStackSize (decrementStackSize(snd res))) ++ "\n"
+      (e, decrementStackSize(snd res))
+  SExp exp -> transExp exp c
 
 transIdent :: Ident -> String
 transIdent x = case x of
   Ident string -> string
 
-transExp :: Exp -> Context -> String
+transExp :: Exp -> Context -> (String, Context)
 transExp x c = case x of
   ExpAdd exp1 exp2 -> do
-    (transExp exp1 c) ++ (transExp exp2 c) ++ "iadd\n"
-    decrementStackSize c
+    let l = transExp exp1 c
+    let c1 = snd l
+    let r = transExp exp2 c1
+    let res = (fst l) ++ (fst r)
+    let c2 = snd r
+    let finalContext = decrementStackSize c2
+    (res ++"iadd " ++ show (currentStackSize finalContext) ++ "\n", finalContext)
   ExpSub exp1 exp2 -> do
-    (transExp exp2 c) ++ (transExp exp1 c) ++ "isub\n"
-    decrementStackSize c
+    let l = transExp exp1 c
+    let c1 = snd l
+    let r = transExp exp2 c1
+    let res = (fst r) ++ (fst l)
+    let c2 = snd r
+    let finalContext = decrementStackSize c2
+    (res ++"isub " ++ show (stackSize finalContext) ++ "\n", finalContext)
   ExpMul exp1 exp2 -> do
-    (transExp exp1 c) ++ (transExp exp2 c) ++ "imul\n"
-    decrementStackSize c
+    let l = transExp exp1 c
+    let c1 = snd l
+    let r = transExp exp2 c1
+    let res = (fst l) ++ (fst r)
+    let c2 = snd r
+    let finalContext = decrementStackSize c2
+    (res ++ "imul " ++ show (currentStackSize finalContext) ++ "\n", finalContext)
   ExpDiv exp1 exp2 -> do
-    (transExp exp2 c) ++ (transExp exp1 c) ++ "idiv\n"
-    decrementStackSize c
-  ExpLit integer -> do
-    incrementStackSize c
-    "iconst " ++ show integer ++ "\n"
+    let l = transExp exp1 c
+    let c1 = snd l
+    let r = transExp exp2 c1
+    let res = (fst r) ++ (fst l)
+    let c2 = snd r
+    let finalContext = decrementStackSize c2
+    (res ++ "idiv " ++ show (stackSize finalContext) ++ "\n", finalContext)
+  ExpLit integer -> ("iconst " ++ show integer ++ " " ++ show (currentStackSize (incrementStackSize c)) ++ "\n", incrementStackSize c)
   ExpVar ident -> do 
     let id = transIdent ident
     let index = findIndex 0 id (names c)
-    incrementStackSize c
-    "iload " ++ (show index) ++ "\n"
+    ("iload " ++ (show index) ++ " " ++ show (currentStackSize (incrementStackSize c)) ++ "\n", incrementStackSize c)

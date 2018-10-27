@@ -23,5 +23,5 @@ data Exp
     | ExpVar Ident
   deriving (Eq, Ord, Show, Read)
 
-data Context = Context {stackSize :: Integer, locals :: Integer, names :: [String]} deriving (Eq, Ord, Show, Read)
+data Context = Context {stackSize :: Integer, currentStackSize :: Integer, locals :: Integer, names :: [String]} deriving (Eq, Ord, Show, Read)
 
