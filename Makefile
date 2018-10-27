@@ -10,4 +10,4 @@ distclean: clean
 	-rm -f DocInstant.* LexInstant.* ParInstant.* LayoutInstant.* SkelInstant.* PrintInstant.* TestInstant.* AbsInstant.* TestInstant ErrM.* SharedString.* ComposOp.* Instant.dtd XMLInstant.* Makefile*
 	
 test: all
-	./TestInstant < ~/Downloads/instant161024/examples/test06.ins
+	./TestInstant < ~/Downloads/instant161024/examples/test07.ins
