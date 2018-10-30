@@ -12,7 +12,7 @@ import ParInstant
 import SkelInstant
 import PrintInstant
 import AbsInstant
-
+import SkelLLVMInstant
 
 
 
@@ -39,8 +39,8 @@ run v p s = let ts = myLLexer s in case p ts of
                           exitFailure
            Ok  tree -> do putStrLn "\nParse Successful!"
                           let Ok pr = pProgram ts
-                          let context = Context 0 0 0 [""]
-                          putStrLn $ transProgram pr context
+                          let context = LLVMContext "" "" 1 [""]
+                          putStrLn $ transLLVMProgram pr context
                           -- showTree v tree
 
                           exitSuccess

@@ -7,7 +7,7 @@ clean:
 	-rm -f *.log *.aux *.hi *.o *.dvi
 
 distclean: clean
-	-rm -f DocInstant.* LexInstant.* ParInstant.* LayoutInstant.* SkelInstant.* PrintInstant.* TestInstant.* AbsInstant.* TestInstant ErrM.* SharedString.* ComposOp.* Instant.dtd XMLInstant.* Makefile*
+	-rm -f DocInstant.* LexInstant.* ParInstant.* LayoutInstant.* SkelInstant.* SkelLLVMInstant.* PrintInstant.* TestInstant.* AbsInstant.* TestInstant ErrM.* SharedString.* ComposOp.* Instant.dtd XMLInstant.* Makefile*
 	
 test: all
 	./TestInstant < ~/Downloads/instant161024/examples/test07.ins
