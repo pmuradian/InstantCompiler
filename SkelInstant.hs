@@ -27,7 +27,7 @@ incrementStackSize ctx = do
   if stackSize ctx < incremented then Context incremented incremented (locals ctx) (names ctx)
   else Context (stackSize ctx) incremented (locals ctx) (names ctx)
 
-transProgram :: Program -> Context -> String
+transProgram :: Program -> Context -> (String, Context)
 transProgram x context = case x of
   Prog stmts -> do 
     let first = head stmts
@@ -35,11 +35,11 @@ transProgram x context = case x of
     let out = fst output
     let ctx = snd output
     let t = tail stmts
-    if t == [] then out
+    if t == [] then (out, ctx)
     else do
       let p = Prog t
-      let asdf = transProgram p ctx
-      out ++ asdf
+      let result = transProgram p ctx
+      (out ++ fst result, snd result)
 
 transStmt :: Stmt -> Context -> (String, Context)
 transStmt x c = case x of
@@ -74,7 +74,7 @@ transExp x c = case x of
     let res = (fst r) ++ (fst l)
     let c2 = snd r
     let finalContext = decrementStackSize c2
-    (res ++"isub " ++ show (stackSize finalContext) ++ "\n", finalContext)
+    (res ++"isub " ++ show (currentStackSize finalContext) ++ "\n", finalContext)
   ExpMul exp1 exp2 -> do
     let l = transExp exp1 c
     let c1 = snd l
@@ -90,9 +90,10 @@ transExp x c = case x of
     let res = (fst r) ++ (fst l)
     let c2 = snd r
     let finalContext = decrementStackSize c2
-    (res ++ "idiv " ++ show (stackSize finalContext) ++ "\n", finalContext)
-  ExpLit integer -> ("iconst " ++ show integer ++ " " ++ show (currentStackSize (incrementStackSize c)) ++ "\n", incrementStackSize c)
+    (res ++ "idiv " ++ show (currentStackSize finalContext) ++ "\n", finalContext)
+  ExpLit integer -> ("iconst_" ++ show integer ++ " " ++ show (currentStackSize (incrementStackSize c)) ++ "\n", incrementStackSize c)
   ExpVar ident -> do 
     let id = transIdent ident
     let index = findIndex 0 id (names c)
-    ("iload " ++ (show index) ++ " " ++ show (currentStackSize (incrementStackSize c)) ++ "\n", incrementStackSize c)
+    let newContext = incrementStackSize c
+    ("iload " ++ id ++ " " ++ show (currentStackSize newContext) ++ "\n", newContext)

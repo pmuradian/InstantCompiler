@@ -1,1 +1,1 @@
-Compiler for a small inperative language Instant
+Compiler for a small inperative language called "Instant"
