@@ -2,10 +2,12 @@
 module Main where
 
 
-import System.IO ( stdin, hGetContents )
+import System.IO ( stdin, hGetContents, stdout, hFlush )
 import System.Environment ( getArgs, getProgName )
 import System.Exit ( exitFailure, exitSuccess )
 import Control.Monad (when)
+import System.FilePath 
+import System.Process
 
 import LexInstant
 import ParInstant
@@ -30,6 +32,9 @@ putStrV v s = when (v > 1) $ putStrLn s
 runFile :: (Print a, Show a) => Verbosity -> ParseFun a -> FilePath -> IO ()
 runFile v p f = putStrLn f >> readFile f >>= run v p
 
+printSomething :: String -> IO ()
+printSomething s = putStrLn s
+
 run :: (Print a, Show a) => Verbosity -> ParseFun a -> String -> IO ()
 run v p s = let ts = myLLexer s in case p ts of
            Bad s    -> do putStrLn "\nParse              Failed...\n"
@@ -48,9 +53,7 @@ run v p s = let ts = myLLexer s in case p ts of
                           let suffix = ".end method"
                           let output = pre ++ prefix ++ fst res ++ suffix
                           writeFile "output.j" output
-                          putStrLn output
-                          -- showTree v tree
-
+                          runCommand "java -jar jasmin.jar -d ./ output.j"
                           exitSuccess
 
 
