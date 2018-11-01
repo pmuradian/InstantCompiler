@@ -9,13 +9,6 @@ concatLLVMArray :: [String] -> String
 concatLLVMArray (x:xs) = x ++ concatLLVMArray xs
 concatLLVMArray [] = "\n"
 
--- findLLVMIndex :: Integer -> String -> [String] -> Integer
--- findLLVMIndex start character (x:xs) = if x == character then start else findLLVMIndex (start + 1) character xs
--- findLLVMIndex start character [] = start
-
--- decrementLLVMStackSize :: LLVMContext -> LLVMContext
--- decrementLLVMStackSize ctx = LLVMContext (stackSize ctx) ((currentStackSize ctx) - 1) (locals ctx) (names ctx)
-
 setVarName :: LLVMContext -> String -> LLVMContext
 setVarName ctx v = LLVMContext v (line ctx) (localsCount ctx) (vars ctx)
 

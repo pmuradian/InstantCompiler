@@ -1,11 +1,17 @@
 all:
-	happy -gca ParInstant.y
-	alex -g LexInstant.x
-	ghc --make InstantLLVM.hs -o insc_llvm
-	ghc --make InstantJVM.hs -o insc_jvm
+	happy -gca ./src/ParInstant.y
+	alex -g ./src/LexInstant.x
+	ghc --make -isrc ./src/InstantLLVM.hs -o insc_llvm
+	ghc --make -isrc ./src/InstantJVM.hs -o insc_jvm
 
 clean:
-	-rm -f *.log *.aux *.hi *.o *.dvi
+	-rm -f src/*.log src/*.aux src/*.hi src/*.o src/*.dvi .hs
+
+cleanexec:
+	-rm -f insc_jvm insc_llvm
+
+cleanoutput:
+	-rm -f *.bc *.j *.ll *.class
 
 distclean: clean
 	-rm -f DocInstant.* LexInstant.* ParInstant.* LayoutInstant.* SkelInstant.* SkelLLVMInstant.* PrintInstant.* TestInstant.* AbsInstant.* TestInstant ErrM.* SharedString.* ComposOp.* Instant.dtd XMLInstant.* Makefile*
