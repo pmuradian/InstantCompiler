@@ -108,4 +108,4 @@ transLLVMExp x c = case x of
     let id = transLLVMIdent ident
     let index = localsCount c
     let ctx = (setVarName (incrementLocalsCount c) ("%tmp_" ++ show index))
-    ("    %tmp_" ++ show index ++ " = load i32* " ++ id ++ "\n", ctx)
+    ("    %tmp_" ++ show index ++ " = load i32, i32* " ++ id ++ "\n", ctx)

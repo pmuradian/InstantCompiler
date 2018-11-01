@@ -6,6 +6,8 @@ import System.IO ( stdin, hGetContents )
 import System.Environment ( getArgs, getProgName )
 import System.Exit ( exitFailure, exitSuccess )
 import Control.Monad (when)
+import System.FilePath 
+import System.Process
 
 import LexInstant
 import ParInstant
@@ -45,9 +47,8 @@ run v p s = let ts = myLLexer s in case p ts of
                           let result = transLLVMProgram pr context
                           let output = prefix ++ result ++ suffix
                           writeFile "output.ll" output
+                          runCommand "/usr/local/opt/llvm/bin/llvm-as -o output.bc output.ll"
                           putStrLn output
-                          -- showTree v tree
-
                           exitSuccess
 
 
