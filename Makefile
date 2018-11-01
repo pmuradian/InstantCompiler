@@ -13,6 +13,9 @@ cleanexec:
 cleanoutput:
 	-rm -f *.bc *.j *.ll *.class
 
+cleanall: clean
+	-rm -f insc_jvm insc_llvm
+
 distclean: clean
 	-rm -f DocInstant.* LexInstant.* ParInstant.* LayoutInstant.* SkelInstant.* SkelLLVMInstant.* PrintInstant.* TestInstant.* AbsInstant.* TestInstant ErrM.* SharedString.* ComposOp.* Instant.dtd XMLInstant.* Makefile*
 	
