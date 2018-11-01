@@ -49,7 +49,7 @@ transStmt x c = case x of
       let n = (names c) ++ [id]
       let newContext = Context (stackSize c) (currentStackSize c) (locals c) n
       let res = transExp exp newContext
-      let e = (fst res) ++ "istore " ++ show index ++ " " ++ show (currentStackSize (decrementStackSize(snd res))) ++ "\n"
+      let e = (fst res) ++ "    istore " ++ show index ++ "\n"
       (e, decrementStackSize(snd res))
   SExp exp -> transExp exp c
 
@@ -66,7 +66,7 @@ transExp x c = case x of
     let res = (fst l) ++ (fst r)
     let c2 = snd r
     let finalContext = decrementStackSize c2
-    (res ++"iadd " ++ show (currentStackSize finalContext) ++ "\n", finalContext)
+    (res ++ "    iadd" ++ "\n", finalContext)
   ExpSub exp1 exp2 -> do
     let l = transExp exp1 c
     let c1 = snd l
@@ -74,7 +74,7 @@ transExp x c = case x of
     let res = (fst r) ++ (fst l)
     let c2 = snd r
     let finalContext = decrementStackSize c2
-    (res ++"isub " ++ show (currentStackSize finalContext) ++ "\n", finalContext)
+    (res ++ "    isub" ++ "\n", finalContext)
   ExpMul exp1 exp2 -> do
     let l = transExp exp1 c
     let c1 = snd l
@@ -82,7 +82,7 @@ transExp x c = case x of
     let res = (fst l) ++ (fst r)
     let c2 = snd r
     let finalContext = decrementStackSize c2
-    (res ++ "imul " ++ show (currentStackSize finalContext) ++ "\n", finalContext)
+    (res ++ "    imul" ++ "\n", finalContext)
   ExpDiv exp1 exp2 -> do
     let l = transExp exp1 c
     let c1 = snd l
@@ -90,10 +90,9 @@ transExp x c = case x of
     let res = (fst r) ++ (fst l)
     let c2 = snd r
     let finalContext = decrementStackSize c2
-    (res ++ "idiv " ++ show (currentStackSize finalContext) ++ "\n", finalContext)
-  ExpLit integer -> ("iconst_" ++ show integer ++ " " ++ show (currentStackSize (incrementStackSize c)) ++ "\n", incrementStackSize c)
+    (res ++ "    idiv" ++ "\n", finalContext)
+  ExpLit integer -> ("    iconst_" ++ show integer ++ "\n", incrementStackSize c)
   ExpVar ident -> do 
     let id = transIdent ident
     let index = findIndex 0 id (names c)
-    let newContext = incrementStackSize c
-    ("iload " ++ id ++ " " ++ show (currentStackSize newContext) ++ "\n", newContext)
+    ("    iload " ++ show index ++ "\n", incrementStackSize c)

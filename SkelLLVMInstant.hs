@@ -47,9 +47,9 @@ tranLLVMsStmt x c = case x of
       let n = (vars c) ++ [id]
       let newLLVMContext = LLVMContext (varName c) (line c) (localsCount c) n
       let res = transLLVMExp exp newLLVMContext
-      let alloc = id ++ " = alloca i32\n"
+      let alloc = "    " ++ id ++ " = alloca i32\n"
       let prev = fst res
-      let e = alloc ++ "store i32 " ++ prev ++ ", i32* " ++ id ++ "\n"
+      let e = alloc ++ "    store i32 " ++ prev ++ ", i32* " ++ id ++ "\n"
       (e, snd res)
   SExp exp -> transLLVMExp exp c
 
@@ -69,7 +69,7 @@ transLLVMExp x c = case x of
     let id2 = varName c2
     let id3 = "%tmp_" ++ show(localsCount c2)
     let finalLLVMContext = setVarName c2 id3
-    (res ++ id3 ++ " = add i32 " ++ id1 ++ ", " ++ id2 ++ "\n", incrementLocalsCount finalLLVMContext)
+    (res ++ "    " ++ id3 ++ " = add i32 " ++ id1 ++ ", " ++ id2 ++ "\n", incrementLocalsCount finalLLVMContext)
   ExpSub exp1 exp2 -> do
     let l = transLLVMExp exp1 c
     let c1 = snd l
@@ -80,7 +80,7 @@ transLLVMExp x c = case x of
     let id2 = varName c2
     let id3 = "%tmp_" ++ show(localsCount c2)
     let finalLLVMContext = setVarName c2 id3
-    (res ++ id3 ++ " = sub i32 " ++ id1 ++ ", " ++ id2 ++ "\n", incrementLocalsCount finalLLVMContext)
+    (res ++ "    " ++ id3 ++ " = sub i32 " ++ id1 ++ ", " ++ id2 ++ "\n", incrementLocalsCount finalLLVMContext)
   ExpMul exp1 exp2 -> do
     let l = transLLVMExp exp1 c
     let c1 = snd l
@@ -91,7 +91,7 @@ transLLVMExp x c = case x of
     let id2 = varName c2
     let id3 = "%tmp_" ++ show(localsCount c2)
     let finalLLVMContext = setVarName c2 id3
-    (res ++ id3 ++ " = mul i32 " ++ id1 ++ ", " ++ id2 ++ "\n", incrementLocalsCount finalLLVMContext)
+    (res ++ "    " ++ id3 ++ " = mul i32 " ++ id1 ++ ", " ++ id2 ++ "\n", incrementLocalsCount finalLLVMContext)
   ExpDiv exp1 exp2 -> do
     let l = transLLVMExp exp1 c
     let c1 = snd l
@@ -102,10 +102,10 @@ transLLVMExp x c = case x of
     let id2 = varName c2
     let id3 = "%tmp_" ++ show(localsCount c2)
     let finalLLVMContext = setVarName c2 id3
-    (res ++ id3 ++ " = sdiv i32 " ++ id1 ++ ", " ++ id2 ++ "\n", incrementLocalsCount finalLLVMContext)
+    (res ++ "    " ++ id3 ++ " = sdiv i32 " ++ id1 ++ ", " ++ id2 ++ "\n", incrementLocalsCount finalLLVMContext)
   ExpLit integer -> (show integer, c)
   ExpVar ident -> do 
     let id = transLLVMIdent ident
     let index = localsCount c
     let ctx = (setVarName (incrementLocalsCount c) ("%tmp_" ++ show index))
-    ("%tmp_" ++ show index ++ " = load i32* " ++ id ++ "\n", ctx)
+    ("    %tmp_" ++ show index ++ " = load i32* " ++ id ++ "\n", ctx)

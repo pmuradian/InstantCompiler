@@ -41,11 +41,11 @@ run v p s = let ts = myLLexer s in case p ts of
                           let Ok pr = pProgram ts
                           let context = LLVMContext "" "" 1 [""]
                           let prefix = "define i32 @main() {\n"
-                          let suffix = "ret i32 0\n}"
+                          let suffix = "    ret i32 0\n}"
                           let result = transLLVMProgram pr context
                           let output = prefix ++ result ++ suffix
                           writeFile "output.ll" output
-                          -- putStrLn $ prefix ++ result ++ suffix
+                          putStrLn output
                           -- showTree v tree
 
                           exitSuccess
