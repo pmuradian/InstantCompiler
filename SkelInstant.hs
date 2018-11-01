@@ -91,7 +91,7 @@ transExp x c = case x of
     let c2 = snd r
     let finalContext = decrementStackSize c2
     (res ++ "    idiv" ++ "\n", finalContext)
-  ExpLit integer -> ("    iconst_" ++ show integer ++ "\n", incrementStackSize c)
+  ExpLit integer -> if integer <= 5 then ("    iconst_" ++ show integer ++ "\n", incrementStackSize c) else ("    bipush " ++ show integer ++ "\n", incrementStackSize c)
   ExpVar ident -> do 
     let id = transIdent ident
     let index = findIndex 0 id (names c)
