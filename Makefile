@@ -20,5 +20,5 @@ distclean: clean
 	-rm -f DocInstant.* LexInstant.* ParInstant.* LayoutInstant.* SkelInstant.* SkelLLVMInstant.* PrintInstant.* TestInstant.* AbsInstant.* TestInstant ErrM.* SharedString.* ComposOp.* Instant.dtd XMLInstant.* Makefile*
 	
 test: all
-	./insc_jvm < ~/Downloads/instant161024/examples/test07.ins
-	./insc_llvm < ~/Downloads/instant161024/examples/test07.ins
+	./insc_jvm ~/Downloads/instant161024/examples/test07.ins
+	./insc_llvm ~/Downloads/instant161024/examples/test07.ins

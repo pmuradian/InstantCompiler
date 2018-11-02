@@ -25,10 +25,17 @@ putStrV :: Verbosity -> String -> IO ()
 putStrV v s = when (v > 1) $ putStrLn s
 
 runFile :: (Print a, Show a) => Verbosity -> ParseFun a -> FilePath -> IO ()
-runFile v p f = putStrLn f >> readFile f >>= run v p
+runFile v p f = do 
+  let path = (takeDirectory f) ++ "/"
+  let name = takeBaseName f
+  putStrLn path >> readFile f >>= run v p path name
+  runCommand ("/usr/local/opt/llvm/bin/llvm-as -o " ++ path ++ name ++ ".bc " ++ path ++ name ++ ".ll")
+  putStrLn ("/usr/local/opt/llvm/bin/llvm-as -o " ++ path ++ name ++ ".bc " ++ path ++ name ++ ".ll")
+  putStrLn (".ll and  .bc output files created in directory" ++ path ++ "\n")
+  exitSuccess
 
-run :: (Print a, Show a) => Verbosity -> ParseFun a -> String -> IO ()
-run v p s = let ts = myLLexer s in case p ts of
+run :: (Print a, Show a) => Verbosity -> ParseFun a -> String -> String -> String -> IO ()
+run v p path name s = let ts = myLLexer s in case p ts of
            Bad s    -> do putStrLn "\nParse              Failed...\n"
                           putStrV v "Tokens:"
                           putStrV v $ show ts
@@ -41,10 +48,7 @@ run v p s = let ts = myLLexer s in case p ts of
                           let suffix = "    ret i32 0\n}"
                           let result = transLLVMProgram pr context
                           let output = prefix ++ result ++ suffix
-                          writeFile "output.ll" output
-                          runCommand "/usr/local/opt/llvm/bin/llvm-as -o output.bc output.ll"
-                          putStrLn output
-                          exitSuccess
+                          writeFile (path ++ name ++ ".ll") output
 
 
 showTree :: (Show a, Print a) => Int -> a -> IO ()
@@ -69,7 +73,7 @@ main = do
   args <- getArgs
   case args of
     ["--help"] -> usage
-    [] -> getContents >>= run 2 pProgram
+    [] -> getContents >>= runFile 2 pProgram
     "-s":fs -> mapM_ (runFile 0 pProgram) fs
     fs -> mapM_ (runFile 2 pProgram) fs
 
