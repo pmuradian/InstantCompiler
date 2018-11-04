@@ -25,5 +25,5 @@ data Exp
 
 data Context = Context {stackSize :: Integer, currentStackSize :: Integer, locals :: Integer, names :: [String]} deriving (Eq, Ord, Show, Read)
 
-data LLVMContext = LLVMContext {varName :: String, line :: String, localsCount :: Integer, vars :: [String]} deriving (Eq, Ord, Show, Read)
+data LLVMContext = LLVMContext {varName :: String, localsCount :: Integer, vars :: [String]} deriving (Eq, Ord, Show, Read)
 

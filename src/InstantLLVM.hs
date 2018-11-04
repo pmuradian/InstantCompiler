@@ -43,11 +43,12 @@ run v p path name s = let ts = myLLexer s in case p ts of
                           exitFailure
            Ok  tree -> do putStrLn "\nParse Successful!"
                           let Ok pr = pProgram ts
-                          let context = LLVMContext "" "" 1 [""]
+                          let context = LLVMContext "" 1 [""]
                           let prefix = "define i32 @main() {\n"
                           let suffix = "    ret i32 0\n}"
                           let result = transLLVMProgram pr context
                           let output = prefix ++ result ++ suffix
+                          putStrLn output
                           writeFile (path ++ name ++ ".ll") output
 
 

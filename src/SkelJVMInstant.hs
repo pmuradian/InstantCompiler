@@ -59,40 +59,23 @@ transIdent x = case x of
 
 transExp :: Exp -> Context -> (String, Context)
 transExp x c = case x of
-  ExpAdd exp1 exp2 -> do
-    let l = transExp exp1 c
-    let c1 = snd l
-    let r = transExp exp2 c1
-    let res = (fst l) ++ (fst r)
-    let c2 = snd r
-    let finalContext = decrementStackSize c2
-    (res ++ "    iadd" ++ "\n", finalContext)
-  ExpSub exp1 exp2 -> do
-    let l = transExp exp1 c
-    let c1 = snd l
-    let r = transExp exp2 c1
-    let res = (fst r) ++ (fst l)
-    let c2 = snd r
-    let finalContext = decrementStackSize c2
-    (res ++ "    isub" ++ "\n", finalContext)
-  ExpMul exp1 exp2 -> do
-    let l = transExp exp1 c
-    let c1 = snd l
-    let r = transExp exp2 c1
-    let res = (fst l) ++ (fst r)
-    let c2 = snd r
-    let finalContext = decrementStackSize c2
-    (res ++ "    imul" ++ "\n", finalContext)
-  ExpDiv exp1 exp2 -> do
-    let l = transExp exp1 c
-    let c1 = snd l
-    let r = transExp exp2 c1
-    let res = (fst r) ++ (fst l)
-    let c2 = snd r
-    let finalContext = decrementStackSize c2
-    (res ++ "    idiv" ++ "\n", finalContext)
+  ExpAdd exp1 exp2 -> transJVMExpression exp1 exp2 "iadd" c
+  ExpSub exp1 exp2 -> transJVMExpression exp1 exp2 "isub" c
+  ExpMul exp1 exp2 -> transJVMExpression exp1 exp2 "imul" c
+  ExpDiv exp1 exp2 -> transJVMExpression exp1 exp2 "idiv" c
   ExpLit integer -> if integer <= 5 then ("    iconst_" ++ show integer ++ "\n", incrementStackSize c) else ("    bipush " ++ show integer ++ "\n", incrementStackSize c)
   ExpVar ident -> do 
     let id = transIdent ident
     let index = findIndex 0 id (names c)
     ("    iload " ++ show index ++ "\n", incrementStackSize c)
+
+
+transJVMExpression :: Exp -> Exp -> String -> Context -> (String, Context)
+transJVMExpression exp1 exp2 operation c = do
+  let l = transExp exp1 c
+  let c1 = snd l
+  let r = transExp exp2 c1
+  let res = (fst r) ++ (fst l)
+  let c2 = snd r
+  let finalContext = decrementStackSize c2
+  (res ++ "    " ++ operation ++ "\n", finalContext)
