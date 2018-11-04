@@ -22,3 +22,15 @@ distclean: clean
 test: all
 	./insc_jvm ~/Downloads/instant161024/examples/test07.ins
 	./insc_llvm ~/Downloads/instant161024/examples/test07.ins
+	./insc_jvm ~/Downloads/instant161024/examples/test06.ins
+	./insc_llvm ~/Downloads/instant161024/examples/test06.ins
+	./insc_jvm ~/Downloads/instant161024/examples/test05.ins
+	./insc_llvm ~/Downloads/instant161024/examples/test05.ins
+	./insc_jvm ~/Downloads/instant161024/examples/test04.ins
+	./insc_llvm ~/Downloads/instant161024/examples/test04.ins
+	./insc_jvm ~/Downloads/instant161024/examples/test03.ins
+	./insc_llvm ~/Downloads/instant161024/examples/test03.ins
+	./insc_jvm ~/Downloads/instant161024/examples/test02.ins
+	./insc_llvm ~/Downloads/instant161024/examples/test02.ins
+	./insc_jvm ~/Downloads/instant161024/examples/test01.ins
+	./insc_llvm ~/Downloads/instant161024/examples/test01.ins

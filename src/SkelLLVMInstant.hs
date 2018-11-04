@@ -5,9 +5,9 @@ module SkelLLVMInstant where
 import System.IO ( stdin, hGetContents )
 import AbsInstant
 
-concatLLVMArray :: [String] -> String
-concatLLVMArray (x:xs) = x ++ concatLLVMArray xs
-concatLLVMArray [] = "\n"
+findIndex :: Integer -> String -> [String] -> Integer
+findIndex start character (x:xs) = if x == character then start else findIndex (start + 1) character xs
+findIndex start character [] = 0
 
 setVarName :: LLVMContext -> String -> LLVMContext
 setVarName ctx v = LLVMContext v (localsCount ctx) (vars ctx)
@@ -34,14 +34,24 @@ tranLLVMsStmt x c = case x of
   SAss ident exp -> do
       let id = transLLVMIdent ident
       let index = 0
+      let alloc = if findIndex 0 id (vars c) == 0 then "    " ++ id ++ " = alloca i32\n" else ""
       let n = (vars c) ++ [id]
       let newLLVMContext = LLVMContext (varName c) (localsCount c) n
       let res = transLLVMExp exp newLLVMContext
-      let alloc = "    " ++ id ++ " = alloca i32\n"
       let prev = fst res
-      let e = alloc ++ "    store i32 " ++ prev ++ ", i32* " ++ id ++ "\n"
+      let temp = varName (snd res)
+      let e = alloc ++ prev ++ "    store i32 " ++ temp ++ ", i32* " ++ id ++ "\n"
       (e, snd res)
-  SExp exp -> transLLVMExp exp c
+  SExp exp -> case exp of
+    ExpLit int -> do 
+      let res = transLLVMExp exp c
+      let cont = snd res
+      let unsedName = "%unused_" ++ show(localsCount cont)
+      let result = "    " ++ unsedName ++ " = alloca i32\n"
+      let ret = result ++ "    store i32 " ++ varName cont ++ ", i32* " ++ unsedName ++ "\n"
+      (ret, incrementLocalsCount cont)
+    otherwise -> transLLVMExp exp c
+
 
 transLLVMIdent :: Ident -> String
 transLLVMIdent x = case x of
@@ -53,7 +63,9 @@ transLLVMExp x c = case x of
   ExpSub exp1 exp2 -> transLLVMExpression exp1 exp2 "sub" c
   ExpMul exp1 exp2 -> transLLVMExpression exp1 exp2 "mul" c
   ExpDiv exp1 exp2 -> transLLVMExpression exp1 exp2 "sdiv" c
-  ExpLit integer -> (show integer, c)
+  ExpLit integer -> do
+    let id = show integer
+    ("", setVarName c id)
   ExpVar ident -> do 
     let id = transLLVMIdent ident
     let index = localsCount c
