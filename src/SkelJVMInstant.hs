@@ -75,7 +75,7 @@ transJVMExpression exp1 exp2 operation c = do
   let l = transExp exp1 c
   let c1 = snd l
   let r = transExp exp2 c1
-  let res = (fst r) ++ (fst l)
+  let res = (fst l) ++ (fst r)
   let c2 = snd r
   let finalContext = decrementStackSize c2
   (res ++ "    " ++ operation ++ "\n", finalContext)

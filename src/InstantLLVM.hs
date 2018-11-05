@@ -28,7 +28,7 @@ runFile :: (Print a, Show a) => Verbosity -> ParseFun a -> FilePath -> IO ()
 runFile v p f = do 
   let path = (takeDirectory f) ++ "/"
   let name = takeBaseName f
-  putStrLn path >> readFile f >>= run v p path name
+  putStrLn "" >> readFile f >>= run v p path name
   runCommand ("/usr/local/opt/llvm/bin/llvm-as -o " ++ path ++ name ++ ".bc " ++ path ++ name ++ ".ll")
   putStrLn ("/usr/local/opt/llvm/bin/llvm-as -o " ++ path ++ name ++ ".bc " ++ path ++ name ++ ".ll")
   putStrLn (".ll and  .bc output files created in directory" ++ path ++ "\n")
@@ -48,7 +48,7 @@ run v p path name s = let ts = myLLexer s in case p ts of
                           let suffix = "    ret i32 0\n}"
                           let result = transLLVMProgram pr context
                           let output = prefix ++ result ++ suffix
-                          putStrLn output
+                          -- putStrLn output
                           writeFile (path ++ name ++ ".ll") output
 
 

@@ -28,7 +28,7 @@ runFile :: (Print a, Show a) => Verbosity -> ParseFun a -> FilePath -> IO ()
 runFile v p f = do 
   let path = takeDirectory f
   let name = takeBaseName f
-  putStrLn path >> readFile f >>= run v p path name
+  putStrLn "" >> readFile f >>= run v p path name
   runCommand ("java -jar res/jasmin.jar -d " ++ path ++ " " ++ path ++ "/" ++ name ++ ".j")
   putStrLn (".j and  .class output files created in directory" ++ path ++ "\n")
   exitSuccess
@@ -47,8 +47,8 @@ run v p path name s  = let ts = myLLexer s in case p ts of
                           let limitStack = stackSize $ snd res
                           let limitLocals = length(names $ snd res)
                           let pre = ".class public " ++ name ++ "\n" ++ ".super java/lang/Object\n" ++ ".method public <init>()V \n" ++ "    aload_0 \n" ++ "    invokespecial java/lang/Object/<init>()V \n" ++ "    return \n" ++ ".end method\n"
-                          let prefix = ".method public static Main()V\n.limit stack " ++ show limitStack ++ "\n.limit locals " ++ show limitLocals ++ "\n"
-                          let suffix = ".end method"
+                          let prefix = ".method public static main([Ljava/lang/String;)V\n.limit stack " ++ show limitStack ++ "\n.limit locals " ++ show limitLocals ++ "\n"
+                          let suffix = "    return\n.end method"
                           let output = pre ++ prefix ++ fst res ++ suffix
                           -- putStrLn output
                           writeFile (path ++ "/" ++ name ++ ".j") output
