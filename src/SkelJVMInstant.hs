@@ -51,7 +51,13 @@ transStmt x c = case x of
       let res = transExp exp newContext
       let e = (fst res) ++ "    istore " ++ show index ++ "\n"
       (e, decrementStackSize(snd res))
-  SExp exp -> transExp exp c
+  SExp exp -> do
+      let result = transExp exp c
+      let string = fst result
+      let ctx = snd result
+      let loadPrint = "    getstatic java/lang/System/out Ljava/io/PrintStream;\n"
+      let print = "    invokevirtual java/io/PrintStream/println(I)V\n"
+      (loadPrint ++ string ++ print, incrementStackSize ctx)
 
 transIdent :: Ident -> String
 transIdent x = case x of

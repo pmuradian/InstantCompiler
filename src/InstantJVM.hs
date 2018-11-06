@@ -47,10 +47,10 @@ run v p path name s  = let ts = myLLexer s in case p ts of
                           let limitStack = stackSize $ snd res
                           let limitLocals = length(names $ snd res)
                           let pre = ".class public " ++ name ++ "\n" ++ ".super java/lang/Object\n" ++ ".method public <init>()V \n" ++ "    aload_0 \n" ++ "    invokespecial java/lang/Object/<init>()V \n" ++ "    return \n" ++ ".end method\n"
-                          let prefix = ".method public static main([Ljava/lang/String;)V\n.limit stack " ++ show limitStack ++ "\n.limit locals " ++ show limitLocals ++ "\n"
+                          let prefix = ".method public static main([Ljava/lang/String;)V\n.limit stack " ++ show (limitStack + 1) ++ "\n.limit locals " ++ show limitLocals ++ "\n"
                           let suffix = "    return\n.end method"
                           let output = pre ++ prefix ++ fst res ++ suffix
-                          -- putStrLn output
+                          putStrLn output
                           writeFile (path ++ "/" ++ name ++ ".j") output
 
 

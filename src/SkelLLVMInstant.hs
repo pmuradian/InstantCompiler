@@ -49,8 +49,15 @@ tranLLVMsStmt x c = case x of
       let unsedName = "%unused_" ++ show(localsCount cont)
       let result = "    " ++ unsedName ++ " = alloca i32\n"
       let ret = result ++ "    store i32 " ++ varName cont ++ ", i32* " ++ unsedName ++ "\n"
-      (ret, incrementLocalsCount cont)
-    otherwise -> transLLVMExp exp c
+      let var = "%tmp_" ++ show(localsCount cont)
+      let loadVar = "    " ++ var ++ " = load i32, i32* " ++ unsedName ++ "\n"
+      let print = "    call void @printInt(i32 " ++ var ++ ")\n"
+      (ret ++ loadVar ++ print, incrementLocalsCount cont)
+    otherwise -> do
+      let result = transLLVMExp exp c
+      let string = fst result
+      let ctx = snd result
+      (string ++ "    call void @printInt(i32 " ++ (varName ctx) ++ ")\n", ctx)
 
 
 transLLVMIdent :: Ident -> String

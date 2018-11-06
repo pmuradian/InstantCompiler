@@ -30,10 +30,11 @@ runFile v p f = do
   let name = takeBaseName f
   putStrLn "" >> readFile f >>= run v p path name
   -- for macOS path to LLVM
-  -- let llvm = "/usr/local/opt/llvm/bin/llvm-as -o "
+  let llvm = "/usr/local/opt/llvm/bin/llvm-as -o "
   -- Linux path to LLVM
-  let llvm = "llvm-as -o "
-  runCommand (llvm ++ path ++ name ++ ".bc " ++ path ++ name ++ ".ll")
+  -- let llvm = "llvm-as -o "
+  runCommand (llvm ++ path ++ name ++ "_out.bc " ++ path ++ name ++ ".ll")
+  runCommand ("llvm-link -o " ++ path ++ name ++ ".bc " ++ path ++ name ++ "_out.bc res/runtime.bc")
   putStrLn (".ll and  .bc output files created in directory" ++ path ++ "\n")
   exitSuccess
 
@@ -47,7 +48,7 @@ run v p path name s = let ts = myLLexer s in case p ts of
            Ok  tree -> do putStrLn "\nParse Successful!"
                           let Ok pr = pProgram ts
                           let context = LLVMContext "" 1 [""]
-                          let prefix = "define i32 @main() {\n"
+                          let prefix = "declare void @printInt(i32)\ndefine i32 @main() {\n"
                           let suffix = "    ret i32 0\n}"
                           let result = transLLVMProgram pr context
                           let output = prefix ++ result ++ suffix
