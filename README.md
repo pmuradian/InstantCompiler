@@ -1,6 +1,7 @@
 Compiler for a small inperative language called "Instant"
+InstantCompiler is a small compiler for "Instant" language that compiles to llvm and jasmin assembly 
 
---- directories and files ---
+--- Directories and files ---
 root direcotory contains:
 Makefile - used to compile and run the project
 Instant.cf - bnfc grammer file
@@ -10,7 +11,7 @@ src/ - source files are located here, contains custom and bnfc generated haskell
 InstantJVM.hs and InstantLLVM.hs files are for creating jvm and llvm compilers respectively. 
 SkelJVMInstant.hs and SkelLLVMInstant.hs files contain implementation of output code generation for jvm and llvm respectively.
 
---- compile and run ---
+--- Compile and run ---
 To run the program use Makefile command:
 make - will create insc_jvm and insc_llvm executables in root directory
 cleanall - will remove all created files after make command including executables insc_jvm and insc_llvm
