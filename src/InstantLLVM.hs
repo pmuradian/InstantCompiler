@@ -29,8 +29,11 @@ runFile v p f = do
   let path = (takeDirectory f) ++ "/"
   let name = takeBaseName f
   putStrLn "" >> readFile f >>= run v p path name
-  runCommand ("/usr/local/opt/llvm/bin/llvm-as -o " ++ path ++ name ++ ".bc " ++ path ++ name ++ ".ll")
-  putStrLn ("/usr/local/opt/llvm/bin/llvm-as -o " ++ path ++ name ++ ".bc " ++ path ++ name ++ ".ll")
+  -- for macOS path to LLVM
+  -- let llvm = "/usr/local/opt/llvm/bin/llvm-as -o "
+  -- Linux path to LLVM
+  let llvm = "llvm-as -o "
+  runCommand (llvm ++ path ++ name ++ ".bc " ++ path ++ name ++ ".ll")
   putStrLn (".ll and  .bc output files created in directory" ++ path ++ "\n")
   exitSuccess
 
