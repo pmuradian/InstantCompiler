@@ -20,8 +20,8 @@ distclean: clean
 	-rm -f DocInstant.* LexInstant.* ParInstant.* LayoutInstant.* SkelInstant.* SkelLLVMInstant.* PrintInstant.* TestInstant.* AbsInstant.* TestInstant ErrM.* SharedString.* ComposOp.* Instant.dtd XMLInstant.* Makefile*
 	
 test: all
-	./insc_jvm ~/Downloads/instant161024/examples/test07.ins
-	./insc_llvm ~/Downloads/instant161024/examples/test07.ins
+	# ./insc_jvm ~/Downloads/instant161024/examples/test07.ins
+	# ./insc_llvm ~/Downloads/instant161024/examples/test07.ins
 	./insc_jvm ~/Downloads/instant161024/examples/test06.ins
 	./insc_llvm ~/Downloads/instant161024/examples/test06.ins
 	./insc_jvm ~/Downloads/instant161024/examples/test05.ins
@@ -36,7 +36,7 @@ test: all
 	./insc_llvm ~/Downloads/instant161024/examples/test01.ins
 
 testLLVM: all
-	./insc_llvm ~/Downloads/instant161024/examples/test07.ins
+	# ./insc_llvm ~/Downloads/instant161024/examples/test07.ins
 	./insc_llvm ~/Downloads/instant161024/examples/test06.ins
 	./insc_llvm ~/Downloads/instant161024/examples/test05.ins
 	./insc_llvm ~/Downloads/instant161024/examples/test04.ins
@@ -45,7 +45,7 @@ testLLVM: all
 	./insc_llvm ~/Downloads/instant161024/examples/test01.ins
 
 testJVM: all
-	./insc_jvm ~/Downloads/instant161024/examples/test07.ins
+	# ./insc_jvm ~/Downloads/instant161024/examples/test07.ins
 	./insc_jvm ~/Downloads/instant161024/examples/test06.ins
 	./insc_jvm ~/Downloads/instant161024/examples/test05.ins
 	./insc_jvm ~/Downloads/instant161024/examples/test04.ins
