@@ -50,7 +50,7 @@ run v p path name s  = let ts = myLLexer s in case p ts of
                           let prefix = ".method public static main([Ljava/lang/String;)V\n.limit stack " ++ show (limitStack + 1) ++ "\n.limit locals " ++ show limitLocals ++ "\n"
                           let suffix = "    return\n.end method"
                           let output = pre ++ prefix ++ fst res ++ suffix
-                          putStrLn output
+                          -- putStrLn output
                           writeFile (path ++ "/" ++ name ++ ".j") output
 
 

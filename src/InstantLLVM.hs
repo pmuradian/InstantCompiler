@@ -30,11 +30,15 @@ runFile v p f = do
   let name = takeBaseName f
   putStrLn "" >> readFile f >>= run v p path name
   -- for macOS path to LLVM
-  let llvm = "/usr/local/opt/llvm/bin/llvm-as -o "
+  -- let llvm_as = "/usr/local/opt/llvm/bin/llvm-as -o "
+  -- let llvm_link = "/usr/local/opt/llvm/bin/llvm-link -o "
   -- Linux path to LLVM
-  -- let llvm = "llvm-as -o "
-  runCommand (llvm ++ path ++ name ++ "_out.bc " ++ path ++ name ++ ".ll")
-  runCommand ("llvm-link -o " ++ path ++ name ++ ".bc " ++ path ++ name ++ "_out.bc res/runtime.bc")
+  let llvm_as = "llvm-as -o "
+  let llvm_link = "llvm-link -o "
+  let first = llvm_as ++ path ++ name ++ "-out.bc " ++ path ++ name ++ ".ll" ++ " && "
+  let second = llvm_link ++ path ++ name ++ ".bc " ++ path ++ name ++ "-out.bc res/runtime.bc" ++ " && "
+  let third = "rm " ++ path ++ name ++ "-out.bc"
+  runCommand (first ++ second ++ third)
   putStrLn (".ll and  .bc output files created in directory" ++ path ++ "\n")
   exitSuccess
 
